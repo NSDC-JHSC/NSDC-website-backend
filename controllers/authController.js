@@ -13,13 +13,17 @@ const { sendEmail, verificationEmailTemplate, resetEmailTemplate } = require('..
 const { registerSchema, loginSchema, requestResetSchema, resetPasswordSchema } = require('../validation/authValidation');
 
 const register = async (req, res) => {
+  // console.log(req);
   const { error, value } = registerSchema.validate(req.body);
+  console.log(error);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
   const { username, email, password } = value;
 
-  const existing = await User.findOne({ $or: [{ email }, { username }] });
-  if (existing) return res.status(409).json({ error: 'Email or username already in use' });
+  const existingEmail = await User.findOne({ email });
+  if (existingEmail) return res.status(409).json({ error: 'Email already in use' });
+  const existingUserName = await User.findOne({ username });
+  if (existingUserName) return res.status(409).json({ error: ' username already in use' });
 
   const hash = await bcrypt.hash(password, 12);
   const user = await User.create({ username, email, password: hash });
@@ -29,19 +33,19 @@ const register = async (req, res) => {
   const verifyLink = `${process.env.CLIENT_BASE_URL}/verify-email?token=${emailToken}`;
   await sendEmail({ to: user.email, subject: 'Verify your email', html: verificationEmailTemplate(verifyLink) });
 
-  res.status(201).json({ message: 'Registered successfully. Please verify your email.' });
+  res.status(201).json({ message: 'Registered successfully. Please verify your email.' , success: true });
 };
 
 const login = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message });
+  if (error) return res.status(400).json({ error: error.details[0].message , success: false });
 
   const { email, password } = value;
   const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+  if (!user) return res.status(401).json({ error: 'Invalid credentials' , success: false });
 
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(401).json({ error: 'Invalid credentials' });
+  if (!ok) return res.status(401).json({ error: 'Invalid credentials' , success: false });
 
   const accessToken = signAccessToken({ userId: user._id.toString(), role: user.role });
   const refreshToken = signRefreshToken({ userId: user._id.toString() });
@@ -53,6 +57,7 @@ const login = async (req, res) => {
   res.status(200).json({
     accessToken,
     refreshToken,
+    success: true,
     user: { id: user._id, email: user.email, username: user.username, role: user.role, isVerified: user.isVerified },
   });
 };
@@ -84,17 +89,17 @@ const refresh = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
   const { token } = req.query;
-  if (!token) return res.status(400).json({ error: 'Missing token' });
+  if (!token) return res.status(400).json({ error: 'Missing token', success : false });
   try {
     const decoded = verifyEmailToken(token);
     const user = await User.findById(decoded.userId);
-    if (!user) return res.status(400).json({ error: 'Invalid token' });
-    if (user.isVerified) return res.status(200).json({ message: 'Email already verified' });
+    if (!user) return res.status(400).json({ error: 'Invalid token' , success : false});
+    if (user.isVerified) return res.status(200).json({ message: 'Email already verified', success : true });
     user.isVerified = true;
     await user.save();
-    return res.status(200).json({ message: 'Email verified successfully' });
+    return res.status(200).json({ message: 'Email verified successfully' , success : true });
   } catch {
-    return res.status(400).json({ error: 'Invalid or expired token' });
+    return res.status(400).json({ error: 'Invalid or expired token' , success : false });
   }
 };
 
