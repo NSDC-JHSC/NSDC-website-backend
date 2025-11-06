@@ -14,6 +14,9 @@ const userRoutes = require('./routes/users');
 
 const app = express();
 
+// ✅ Enable trust proxy (important for Render, Vercel, etc.)
+app.set('trust proxy', 1);
+
 // Security & middleware
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_BASE_URL, credentials: true }));
