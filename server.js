@@ -11,6 +11,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
+const openRoutes = require('./routes/open');
 
 const app = express();
 
@@ -31,6 +32,7 @@ connectDB();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/open', openRoutes);
 
 // Health
 app.get('/health', (req, res) => res.json({ status: 'OK' }));

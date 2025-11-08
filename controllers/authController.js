@@ -47,6 +47,8 @@ const login = async (req, res) => {
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return res.status(401).json({ error: 'Invalid credentials' , success: false });
 
+  if (!(user.isVerified)) return res.status(401).json({ message: 'Email not verified', success : false });
+
   const accessToken = signAccessToken({ userId: user._id.toString(), role: user.role });
   const refreshToken = signRefreshToken({ userId: user._id.toString() });
 
