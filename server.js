@@ -18,19 +18,12 @@ const app = express();
 // ✅ Enable trust proxy (important for Render, Vercel, etc.)
 app.set('trust proxy', 1);
 
-const allowedOrigins = [
-    'http://localhost:3000',
-    'https://nsdc-website.onrender.com'
-];
-
-// Security & middleware
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(cookieParser());
-app.use(generalLimiter);
-app.use(cors({
+const corsOptions = {
     origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:3000',
+            'https://nsdc-website.onrender.com'
+        ];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
@@ -38,12 +31,21 @@ app.use(cors({
         }
     },
     credentials: true,
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-// Handle preflight requests
-app.options('*', cors());
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
+// Security & middleware
+app.use(helmet());
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(cookieParser());
+app.use(generalLimiter);
+
+app.use(cors(corsOptions));
+
+// ✅ Explicitly handle preflight requests using same options
+app.options('*', cors(corsOptions));
 
 // Connect DB
 connectDB();
