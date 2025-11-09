@@ -18,15 +18,32 @@ const app = express();
 // ✅ Enable trust proxy (important for Render, Vercel, etc.)
 app.set('trust proxy', 1);
 
+const allowedOrigins = [
+    'http://localhost:3000',
+    process.env.CLIENT_BASE_URL
+];
+
 // Security & middleware
 app.use(helmet());
-app.use(cors({ origin: [process.env.CLIENT_BASE_URL,
-    "http://localhost:5173/"
-], credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(generalLimiter);
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+// Handle preflight requests
+app.options('*', cors());
+
 
 // Connect DB
 connectDB();
