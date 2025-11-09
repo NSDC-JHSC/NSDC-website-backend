@@ -11,7 +11,8 @@ const {
     getcontentTeam,
     getmanagementTeam,
     getcreativeTeam,
-    getcorporateMarkettingAffairsTeam
+    getcorporateMarkettingAffairsTeam,
+    collectMessage
 } = require('../controllers/openController');
 
 // Open routes
@@ -25,6 +26,7 @@ router.get('/techTeam', authLimiter, getmediaTeam);
 router.get('/contentTeam', authLimiter, getcontentTeam);
 router.get('/managementTeam', authLimiter, getmanagementTeam);
 router.get('/mediaTeam', authLimiter, getcreativeTeam);
+router.post('/sendMessage', authLimiter, collectMessage);
 
 
 module.exports = router;
