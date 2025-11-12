@@ -33,21 +33,21 @@ const register = async (req, res) => {
   const verifyLink = `${process.env.CLIENT_BASE_URL}/verify-email?token=${emailToken}`;
   await sendEmail({ to: user.email, subject: 'Verify your email', html: verificationEmailTemplate(verifyLink) });
 
-  res.status(201).json({ message: 'Registered successfully. Please verify your email.' , success: true });
+  res.status(201).json({ message: 'Registered successfully. Please verify your email.', success: true });
 };
 
 const login = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.details[0].message , success: false });
+  if (error) return res.status(400).json({ error: error.details[0].message, success: false });
 
   const { email, password } = value;
   const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' , success: false });
+  if (!user) return res.status(401).json({ error: 'Invalid credentials', success: false });
 
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(401).json({ error: 'Invalid credentials' , success: false });
+  if (!ok) return res.status(401).json({ error: 'Invalid credentials', success: false });
 
-  if (!(user.isVerified)) return res.status(401).json({ message: 'Email not verified', success : false });
+  if (!(user.isVerified)) return res.status(401).json({ message: 'Email not verified', success: false });
 
   const accessToken = signAccessToken({ userId: user._id.toString(), role: user.role });
   const refreshToken = signRefreshToken({ userId: user._id.toString() });
@@ -56,11 +56,24 @@ const login = async (req, res) => {
   user.lastLoginAt = new Date();
   await user.save();
 
+  res.cookie("user", {
+    id: user._id,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+    isVerified: user.isVerified,
+    profile : user.profile
+  }, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
+  });
+
   res.status(200).json({
     accessToken,
     refreshToken,
     success: true,
-    user: { id: user._id, email: user.email, username: user.username, role: user.role, isVerified: user.isVerified },
   });
 };
 
@@ -91,17 +104,17 @@ const refresh = async (req, res) => {
 
 const verifyEmail = async (req, res) => {
   const { token } = req.query;
-  if (!token) return res.status(400).json({ error: 'Missing token', success : false });
+  if (!token) return res.status(400).json({ error: 'Missing token', success: false });
   try {
     const decoded = verifyEmailToken(token);
     const user = await User.findById(decoded.userId);
-    if (!user) return res.status(400).json({ error: 'Invalid token' , success : false});
-    if (user.isVerified) return res.status(200).json({ message: 'Email already verified', success : true });
+    if (!user) return res.status(400).json({ error: 'Invalid token', success: false });
+    if (user.isVerified) return res.status(200).json({ message: 'Email already verified', success: true });
     user.isVerified = true;
     await user.save();
-    return res.status(200).json({ message: 'Email verified successfully' , success : true });
+    return res.status(200).json({ message: 'Email verified successfully', success: true });
   } catch {
-    return res.status(400).json({ error: 'Invalid or expired token' , success : false });
+    return res.status(400).json({ error: 'Invalid or expired token', success: false });
   }
 };
 
@@ -155,6 +168,7 @@ const logout = async (req, res) => {
       user.refreshToken = undefined;
       await user.save();
     }
+    res.clearCookie("user");
     res.status(200).json({ message: 'Logged out' });
   } catch {
     res.status(200).json({ message: 'Logged out' });

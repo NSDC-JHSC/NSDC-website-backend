@@ -10,6 +10,7 @@ const {
   updateUserRole,
   deleteUser,
 } = require('../controllers/userController');
+const { getHackathonData } = require('../controllers/eventController');
 
 // Self profile
 router.get('/me', auth, getMe);
@@ -20,5 +21,8 @@ router.get('/', auth, requireRoles(['admin']), listUsers);
 router.get('/:id', auth, requireRoles(['admin']), getUserById);
 router.put('/:id/role', auth, requireRoles(['admin']), updateUserRole);
 router.delete('/:id', auth, requireRoles(['admin']), deleteUser);
+
+// Hackathone Page
+router.get('/getHachathonDetails/:hackathonId', auth, getHackathonData );
 
 module.exports = router;

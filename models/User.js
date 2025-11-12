@@ -1,3 +1,4 @@
+const { object } = require('joi');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
@@ -14,10 +15,16 @@ const userSchema = new mongoose.Schema(
       avatarUrl: { type: String , default: ''},
       organisation: { type: String , default: ''},
       gender: { type: String ,enum: ['Male', 'Female', "Rather not to say" ], default: 'Rather not to say'},
-      phone: { type: String , default: ''},
-      address: { type: String , default: ''},
+      phone: { type: String},
+      address: { type: String},
       nsdccoins: { type: Number, default: 0 },
-      registeredEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event', default: null }], // example of additional field
+      registeredEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event'}],
+      registeredHackathon: [{ 
+        hackathonId : {type: mongoose.Schema.Types.ObjectId, ref: "Hackathon"},
+        teamId : {type : String},
+        isLead : {type : Boolean},
+        members : {type : Number}
+       }],
     }
   },
   { timestamps: true }

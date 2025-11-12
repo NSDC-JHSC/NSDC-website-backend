@@ -21,7 +21,7 @@ app.set('trust proxy', 1);
 const corsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = [
-            'http://localhost:3000',
+            'http://localhost:5173',
             'https://nsdc-website.onrender.com'
         ];
         if (!origin || allowedOrigins.includes(origin)) {
