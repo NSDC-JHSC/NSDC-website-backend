@@ -62,12 +62,12 @@ const login = async (req, res) => {
     username: user.username,
     role: user.role,
     isVerified: user.isVerified,
-    profile : user.profile
+    profile: user.profile
   }, {
     httpOnly: false,
     secure: process.env.NODE_ENV === "production",
     sameSite: "none",
-    maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days
+    maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
   });
 
   res.status(200).json({
@@ -79,18 +79,23 @@ const login = async (req, res) => {
 
 const refresh = async (req, res) => {
   const { refreshToken } = req.body;
-  if (!refreshToken) return res.status(400).json({ error: 'Missing refresh token' });
+  if (!refreshToken) {
+    res.clearCookie("user");
+    return res.status(400).json({ error: 'Missing refresh token', success: false });
+  }
 
   let decoded;
   try {
     decoded = verifyRefreshToken(refreshToken);
   } catch {
-    return res.status(401).json({ error: 'Invalid or expired refresh token' });
+    res.clearCookie("user");
+    return res.status(401).json({ error: 'Invalid or expired refresh token', success: false });
   }
 
   const user = await User.findById(decoded.userId);
   if (!user || user.refreshToken !== refreshToken) {
-    return res.status(401).json({ error: 'Refresh token not recognized' });
+    res.clearCookie("user");
+    return res.status(401).json({ error: 'Refresh token not recognized', success: false });
   }
 
   const newAccessToken = signAccessToken({ userId: user._id.toString(), role: user.role });
@@ -98,8 +103,20 @@ const refresh = async (req, res) => {
 
   user.refreshToken = newRefreshToken; // rotate
   await user.save();
-
-  res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+  res.cookie("user", {
+    id: user._id,
+    email: user.email,
+    username: user.username,
+    role: user.role,
+    isVerified: user.isVerified,
+    profile: user.profile
+  }, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+    maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
+  });
+  res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken, success: true });
 };
 
 const verifyEmail = async (req, res) => {

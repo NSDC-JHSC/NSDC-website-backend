@@ -3,19 +3,20 @@ const mongoose = require('mongoose');
 
 const hackathonSchema = new mongoose.Schema(
     {
-        poster: { types: String },
+        poster: { type: String },
         tag: { type: String, enum: ['UPCOMING', 'PAST', "ONGOING"] },
-        title: { types: String },
-        date: { types: String },
-        vanue: { types: String },
-        desc: { types: String },
-        addInfo: { types: String },
-        link: { types: String },
-        startDate : {type :Date},
-        endDate : {type :Date},
+        title: { type: String },
+        date: { type: String },
+        vanue: { type: String },
+        desc: { type: String },
+        Agenda : [{type : String}],
+        addInfo: [{ type: String }],
+        link: { type: String },
+        timing: {type : String},
         isProblemStatementAvailable: { type: Boolean, default: false },
         problemStatemt: [{ type: String }],
-        startSubmission: { type: Boolean }
+        startSubmission: { type: Boolean },
+        ideaSubmitedBy : [{type:String}]
     },
     { timestamps: true }
 );
