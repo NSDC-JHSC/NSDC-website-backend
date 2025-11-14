@@ -19,13 +19,13 @@ const {
 router.get('/events', authLimiter, getEvents);
 router.get('/coreTeam', authLimiter, getCoreTeam);
 router.get('/socialMediaTeam', authLimiter, getsocialMediaTeam);
-router.get('/creativeTeam', authLimiter, gettechTeam);
+router.get('/creativeTeam', authLimiter, getcreativeTeam);
 router.get('/corporateMarkettingAffairsTeam', authLimiter, getcorporateMarkettingAffairsTeam);
 router.get('/dataScienceTeam', authLimiter, getdataScienceTeam);
-router.get('/techTeam', authLimiter, getmediaTeam);
+router.get('/techTeam', authLimiter, gettechTeam);
 router.get('/contentTeam', authLimiter, getcontentTeam);
 router.get('/managementTeam', authLimiter, getmanagementTeam);
-router.get('/mediaTeam', authLimiter, getcreativeTeam);
+router.get('/mediaTeam', authLimiter, getmediaTeam);
 router.post('/sendMessage', authLimiter, collectMessage);
 
 
