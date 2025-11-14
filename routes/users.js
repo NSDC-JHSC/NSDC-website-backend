@@ -16,7 +16,7 @@ const {
   submitHachathonPpt
 } = require('../controllers/eventController');
 
-const upload = multer({ dest: "uploadPresention/" });
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Self profile
 router.get('/me', auth, getMe);
