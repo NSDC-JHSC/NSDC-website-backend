@@ -29,7 +29,7 @@ router.put('/:id/role', auth, requireRoles(['admin']), updateUserRole);
 router.delete('/:id', auth, requireRoles(['admin']), deleteUser);
 
 // Hackathone Page
-router.get('/getHachathonDetails/:hackathonId', auth, getHackathonData);
+router.post('/getHackathonDetails/:hackathonId', auth, getHackathonData);
 // router.post('/uploadPresention', upload.single("file"), auth, submitHachathonPpt);
 
 module.exports = router;
