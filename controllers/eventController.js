@@ -8,7 +8,7 @@ const getHackathonData = async (req, res) => {
 
   try {
     const { hackathonId } = req.params;
-    const user = req.cookies.user;
+    const {user} = req.body;
 
     const dbUser = await User.findById(user.id);
 

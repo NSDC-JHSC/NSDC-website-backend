@@ -56,21 +56,31 @@ const login = async (req, res) => {
   user.lastLoginAt = new Date();
   await user.save();
 
-  res.cookie("user", {
+    const sendUser = {
     id: user._id,
     email: user.email,
     username: user.username,
     role: user.role,
     isVerified: user.isVerified,
     profile: user.profile
-  }, {
-    httpOnly: false,
-    secure: true,
-    sameSite: "none",
-    maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
-  });
+  }
+
+  // res.cookie("user", {
+  //   id: user._id,
+  //   email: user.email,
+  //   username: user.username,
+  //   role: user.role,
+  //   isVerified: user.isVerified,
+  //   profile: user.profile
+  // }, {
+  //   httpOnly: false,
+  //   secure: true,
+  //   sameSite: "none",
+  //   maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
+  // });
 
   res.status(200).json({
+    sendUser,
     accessToken,
     refreshToken,
     success: true,
@@ -103,20 +113,30 @@ const refresh = async (req, res) => {
 
   user.refreshToken = newRefreshToken; // rotate
   await user.save();
-  res.cookie("user", {
+
+  const sendUser = {
     id: user._id,
     email: user.email,
     username: user.username,
     role: user.role,
     isVerified: user.isVerified,
     profile: user.profile
-  }, {
-    httpOnly: false,
-    secure: true,
-    sameSite: "none",
-    maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
-  });
-  res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken, success: true });
+  }
+
+  // res.cookie("user", {
+  //   id: user._id,
+  //   email: user.email,
+  //   username: user.username,
+  //   role: user.role,
+  //   isVerified: user.isVerified,
+  //   profile: user.profile
+  // }, {
+  //   httpOnly: false,
+  //   secure: true,
+  //   sameSite: "none",
+  //   maxAge: 1 * 24 * 60 * 60 * 1000 // 1 days
+  // });
+  res.status(200).json({sendUser, accessToken: newAccessToken, refreshToken: newRefreshToken, success: true });
 };
 
 const verifyEmail = async (req, res) => {
