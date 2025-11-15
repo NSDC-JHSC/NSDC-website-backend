@@ -8,7 +8,7 @@ const getHackathonData = async (req, res) => {
 
   try {
     const { hackathonId } = req.params;
-    const {user} = req.body;
+    const { user } = req.body;
 
     const dbUser = await User.findById(user.id);
 
@@ -35,18 +35,20 @@ const getHackathonData = async (req, res) => {
 
     // Step 2: Find all teammates with same hackathonId & teamId
     const teamMembers = await User.find({
-      'registeredHackathon.id': hackathonId,
-      'registeredHackathon.teamId': teamId
-    }).select('name email profile.organisation registeredHackathon.isLead');
+      'profile.registeredHackathon.id': hackathonId,
+      'profile.registeredHackathon.teamId': teamId
+    }).select('profile.name email profile.organisation profile.registeredHackathon');
 
     // Step 3: Format member details
     const members = teamMembers.map(u => {
-      const reg = u.registeredHackathon.find(h => h.id === hackathonId);
+      const reg = u.profile.registeredHackathon.find(
+        h => h.id?.toString() === hackathonId
+      );
       return {
-        name: u.name,
+        name: u.profile.name,
         email: u.email,
         org: u.profile.organisation,
-        isLeader: reg?.isLeader,
+        isLeader: reg?.isLead,
       };
     });
 
