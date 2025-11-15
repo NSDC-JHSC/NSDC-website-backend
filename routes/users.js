@@ -1,5 +1,5 @@
 const express = require('express');
-const multer = require("multer");
+// const multer = require("multer");
 const router = express.Router();
 const auth = require('../middleware/auth');
 const requireRoles = require('../middleware/roles');
@@ -13,10 +13,10 @@ const {
 } = require('../controllers/userController');
 const {
   getHackathonData,
-  submitHachathonPpt
+  // submitHachathonPpt
 } = require('../controllers/eventController');
 
-const upload = multer({ storage: multer.memoryStorage() });
+// const upload = multer({ storage: multer.memoryStorage() });
 
 // Self profile
 router.get('/me', auth, getMe);
@@ -30,6 +30,6 @@ router.delete('/:id', auth, requireRoles(['admin']), deleteUser);
 
 // Hackathone Page
 router.get('/getHachathonDetails/:hackathonId', auth, getHackathonData);
-router.post('/uploadPresention', upload.single("file"), auth, submitHachathonPpt);
+// router.post('/uploadPresention', upload.single("file"), auth, submitHachathonPpt);
 
 module.exports = router;
