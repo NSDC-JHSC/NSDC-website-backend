@@ -22,7 +22,7 @@ const corsOptions = {
     origin: function (origin, callback) {
         const allowedOrigins = [
             'http://localhost:5173',
-            'https://nsdc-website.onrender.com'
+            'https://nsdc-jhsc.onrender.com'
         ];
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
