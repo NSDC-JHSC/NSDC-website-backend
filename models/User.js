@@ -1,5 +1,5 @@
-const { object } = require('joi');
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import Joi from 'joi';
 
 const userSchema = new mongoose.Schema(
   {
@@ -22,14 +22,14 @@ const userSchema = new mongoose.Schema(
         id: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
         title: { type: String },
         tag: { type: String, enum: ['UPCOMING', 'PAST', "ONGOING"] },
-        vanue: { type: String },
+        venue: { type: String },
         date : {type : String}
       }],
       registeredHackathon: [{
         id: { type: mongoose.Schema.Types.ObjectId, ref: "Hackathon" },
         title: { type: String },
         tag: { type: String, enum: ['UPCOMING', 'PAST', "ONGOING"] },
-        vanue: { type: String },
+        venue: { type: String },
         teamId: { type: String },
         teamName: { type: String },
         isLead: { type: Boolean },
@@ -40,4 +40,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

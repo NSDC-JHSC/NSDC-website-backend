@@ -1,5 +1,5 @@
-const { object } = require('joi');
-const mongoose = require('mongoose');
+import Joi from 'joi';
+import mongoose  from 'mongoose';
 
 const hackathonSchema = new mongoose.Schema(
     {
@@ -7,7 +7,7 @@ const hackathonSchema = new mongoose.Schema(
         tag: { type: String, enum: ['UPCOMING', 'PAST', "ONGOING"] },
         title: { type: String },
         date: { type: String },
-        vanue: { type: String },
+        venue: { type: String },
         desc: { type: String },
         Agenda : [{type : String}],
         addInfo: [{ type: String }],
@@ -21,4 +21,4 @@ const hackathonSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Hackathon', hackathonSchema);
+export default mongoose.model('Hackathon', hackathonSchema);  

@@ -1,8 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const { authLimiter } = require('../middleware/rateLimiter');
-const auth = require('../middleware/auth');
-const {
+import express from 'express';
+import { authLimiter } from '../middleware/rateLimiter.js';
+import auth from '../middleware/auth.js';
+import {
   register,
   login,
   refresh,
@@ -10,7 +9,9 @@ const {
   requestPasswordReset,
   resetPassword,
   logout,
-} = require('../controllers/authController');
+} from '../controllers/authController.js';
+
+const router = express.Router();
 
 // Auth routes
 router.post('/register', authLimiter, register);
@@ -30,4 +31,4 @@ router.get('/status', auth, (req, res) => {
   res.json({ authenticated: true, verified: req.user.isVerified, role: req.user.role });
 });
 
-module.exports = router;
+export default router;

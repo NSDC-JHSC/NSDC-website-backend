@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
   // host: process.env.SMTP_HOST,
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async ({ to, subject, html }) => {
+export const sendEmail = async ({ to, subject, html }) => {
   const info = await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to,
@@ -23,7 +23,7 @@ const sendEmail = async ({ to, subject, html }) => {
   return info;
 };
 
-const verificationEmailTemplate = (verifyLink) => `
+export const verificationEmailTemplate = (verifyLink) => `
   <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f5f6fa; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
@@ -94,8 +94,7 @@ const verificationEmailTemplate = (verifyLink) => `
   </div>
 `;
 
-
-const resetEmailTemplate = (resetLink) => `
+export const resetEmailTemplate = (resetLink) => `
   <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f5f6fa; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
@@ -165,6 +164,3 @@ const resetEmailTemplate = (resetLink) => `
     </div>
   </div>
 `;
-
-
-module.exports = { sendEmail, verificationEmailTemplate, resetEmailTemplate };

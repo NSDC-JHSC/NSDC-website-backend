@@ -1,20 +1,22 @@
-const express = require('express');
-// const multer = require("multer");
-const router = express.Router();
-const auth = require('../middleware/auth');
-const requireRoles = require('../middleware/roles');
-const {
+import express from 'express';
+// import { Readable } from 'stream';
+// import multer from 'multer';
+import auth from '../middleware/auth.js';
+import requireRoles from '../middleware/roles.js';
+import {
   getMe,
   updateMe,
   listUsers,
   getUserById,
   updateUserRole,
   deleteUser,
-} = require('../controllers/userController');
-const {
+} from '../controllers/userController.js';
+import {
   getHackathonData,
   // submitHachathonPpt
-} = require('../controllers/eventController');
+} from '../controllers/eventController.js';
+
+const router = express.Router();
 
 // const upload = multer({ storage: multer.memoryStorage() });
 
@@ -32,4 +34,4 @@ router.delete('/:id', auth, requireRoles(['admin']), deleteUser);
 router.post('/getHackathonDetails/:hackathonId', auth, getHackathonData);
 // router.post('/uploadPresention', upload.single("file"), auth, submitHachathonPpt);
 
-module.exports = router;
+export default router;

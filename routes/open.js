@@ -1,7 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const { authLimiter } = require('../middleware/rateLimiter');
-const {
+import express from 'express';
+import { authLimiter } from '../middleware/rateLimiter.js';
+import {
     getEvents,
     getCoreTeam,
     getsocialMediaTeam,
@@ -13,10 +12,13 @@ const {
     getcreativeTeam,
     getcorporateMarkettingAffairsTeam,
     collectMessage
-} = require('../controllers/openController');
+} from '../controllers/openController.js';
 
-// Open routes
+const router = express.Router();
+
 router.get('/events', authLimiter, getEvents);
+
+
 router.get('/coreTeam', authLimiter, getCoreTeam);
 router.get('/socialMediaTeam', authLimiter, getsocialMediaTeam);
 router.get('/creativeTeam', authLimiter, getcreativeTeam);
@@ -26,7 +28,8 @@ router.get('/techTeam', authLimiter, gettechTeam);
 router.get('/contentTeam', authLimiter, getcontentTeam);
 router.get('/managementTeam', authLimiter, getmanagementTeam);
 router.get('/mediaTeam', authLimiter, getmediaTeam);
+
+
 router.post('/sendMessage', authLimiter, collectMessage);
 
-
-module.exports = router;
+export default router;

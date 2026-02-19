@@ -1,5 +1,5 @@
-const User = require("../models/User");
-const Hackathon = require("../models/event")
+import User from "../models/User.js";
+import Hackathon from "../models/event.js";
 // const { google } = require("googleapis");
 // const { Readable } = require("stream");
 // const cloudinary = require("cloudinary").v2;
@@ -61,7 +61,7 @@ const getHackathonData = async (req, res) => {
         id: hackathonDetails.id,
         title: hackathonDetails.title,
         date: hackathonDetails.date,
-        vanue: hackathonDetails.vanue,
+        venue: hackathonDetails.venue,
         desc: hackathonDetails.desc,
         Agenda: hackathonDetails.Agenda,
         addInfo: hackathonDetails.addInfo,
@@ -182,7 +182,7 @@ const getHackathonData = async (req, res) => {
 
 
 
-module.exports = {
+export {
   getHackathonData,
   // submitHachathonPpt
 };

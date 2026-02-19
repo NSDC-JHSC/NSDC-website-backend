@@ -1,9 +1,7 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-const messageSchema = Joi.object({
+export const messageSchema = Joi.object({
   name: Joi.string().max(64).required(),
   email: Joi.string().email().required(),
   message: Joi.string().max(600).required(),
 });
-
-module.exports = { messageSchema };

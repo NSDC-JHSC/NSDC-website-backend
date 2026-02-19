@@ -1,4 +1,4 @@
-const {
+import {
     Event,
     coreTeam,
     socialMediaTeam,
@@ -9,13 +9,15 @@ const {
     managementTeam,
     creativeTeam,
     corporateMarkettingAffairsTeam
-} = require('../models/other');
-const { messageSchema } = require('../validation/messageValidation');
+} from '../models/other.js';
+import { messageSchema } from '../validation/messageValidation.js';
+import { checkAndUpdateEventStatus } from '../utils/eventUtils.js';
 
-const getEvents = async (req, res) => {
+export const getEvents = async (req, res) => {
 
     try {
-        const events = await Event.find({});
+        let events = await Event.find({});
+        events = await checkAndUpdateEventStatus(events);
         res.status(200).json({ events, success: true });
     }
     catch (err) {
@@ -23,7 +25,7 @@ const getEvents = async (req, res) => {
     }
 };
 
-const getCoreTeam = async (req, res) => {
+export const getCoreTeam = async (req, res) => {
 
     try {
         const coreNsdcMemebers = await coreTeam.findOne({});
@@ -34,7 +36,7 @@ const getCoreTeam = async (req, res) => {
     }
 };
 
-const getsocialMediaTeam = async (req, res) => {
+export const getsocialMediaTeam = async (req, res) => {
 
     try {
         const socialMediaTeamMembers = await socialMediaTeam.findOne({});
@@ -45,7 +47,7 @@ const getsocialMediaTeam = async (req, res) => {
     }
 };
 
-const gettechTeam = async (req, res) => {
+export const gettechTeam = async (req, res) => {
 
     try {
         const techTeamMembers = await techTeam.findOne({});
@@ -56,7 +58,7 @@ const gettechTeam = async (req, res) => {
     }
 };
 
-const getdataScienceTeam = async (req, res) => {
+export const getdataScienceTeam = async (req, res) => {
 
     try {
         const dataScienceTeamMembers = await dataScienceTeam.findOne({});
@@ -67,7 +69,7 @@ const getdataScienceTeam = async (req, res) => {
     }
 };
 
-const getmediaTeam = async (req, res) => {
+export const getmediaTeam = async (req, res) => {
 
     try {
         const mediaTeamMembers = await mediaTeam.findOne({});
@@ -78,7 +80,7 @@ const getmediaTeam = async (req, res) => {
     }
 };
 
-const getcontentTeam = async (req, res) => {
+export const getcontentTeam = async (req, res) => {
 
     try {
         const contentTeamMembers = await contentTeam.findOne({});
@@ -89,7 +91,7 @@ const getcontentTeam = async (req, res) => {
     }
 };
 
-const getmanagementTeam = async (req, res) => {
+export const getmanagementTeam = async (req, res) => {
 
     try {
         const managementTeamMembers = await managementTeam.findOne({});
@@ -100,7 +102,7 @@ const getmanagementTeam = async (req, res) => {
     }
 };
 
-const getcreativeTeam = async (req, res) => {
+export const getcreativeTeam = async (req, res) => {
 
     try {
         const creativeTeamMembers = await creativeTeam.findOne({});
@@ -111,7 +113,7 @@ const getcreativeTeam = async (req, res) => {
     }
 };
 
-const getcorporateMarkettingAffairsTeam = async (req, res) => {
+export const getcorporateMarkettingAffairsTeam = async (req, res) => {
 
     try {
         const corporateMarkettingAffairsTeamMembers = await corporateMarkettingAffairsTeam.findOne({});
@@ -122,7 +124,7 @@ const getcorporateMarkettingAffairsTeam = async (req, res) => {
     }
 };
 
-const collectMessage = async (req, res) => {
+export const collectMessage = async (req, res) => {
     const { error, value } = messageSchema.validate(req.body);
     console.log(error);
     if (error) return res.status(400).json({ error: error.details[0].message });
@@ -149,19 +151,4 @@ const collectMessage = async (req, res) => {
     catch (err) {
         res.status(401).json({ error: err, success: false });
     }
-};
-
-
-module.exports = {
-    getEvents,
-    getCoreTeam,
-    getsocialMediaTeam,
-    gettechTeam,
-    getdataScienceTeam,
-    getmediaTeam,
-    getcontentTeam,
-    getmanagementTeam,
-    getcreativeTeam,
-    getcorporateMarkettingAffairsTeam,
-    collectMessage
 };

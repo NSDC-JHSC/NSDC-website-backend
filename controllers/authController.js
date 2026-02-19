@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const {
+import bcrypt from 'bcryptjs';
+import User from '../models/User.js';
+import {
   signAccessToken,
   signRefreshToken,
   signEmailVerificationToken,
@@ -8,11 +8,11 @@ const {
   verifyRefreshToken,
   verifyEmailToken,
   verifyResetToken,
-} = require('../utils/token');
-const { sendEmail, verificationEmailTemplate, resetEmailTemplate } = require('../utils/email');
-const { registerSchema, loginSchema, requestResetSchema, resetPasswordSchema } = require('../validation/authValidation');
+} from '../utils/token.js';
+import { sendEmail, verificationEmailTemplate, resetEmailTemplate } from '../utils/email.js';
+import { registerSchema, loginSchema, requestResetSchema, resetPasswordSchema } from '../validation/authValidation.js';
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
   // console.log(req);
   const { error, value } = registerSchema.validate(req.body);
   console.log(error);
@@ -36,7 +36,7 @@ const register = async (req, res) => {
   res.status(201).json({ message: 'Registered successfully. Please verify your email.', success: true });
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   const { error, value } = loginSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message, success: false });
 
@@ -87,7 +87,7 @@ const login = async (req, res) => {
   });
 };
 
-const refresh = async (req, res) => {
+export const refresh = async (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) {
     res.clearCookie("user");
@@ -139,7 +139,7 @@ const refresh = async (req, res) => {
   res.status(200).json({sendUser, accessToken: newAccessToken, refreshToken: newRefreshToken, success: true });
 };
 
-const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res) => {
   const { token } = req.query;
   if (!token) return res.status(400).json({ error: 'Missing token', success: false });
   try {
@@ -155,7 +155,7 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const requestPasswordReset = async (req, res) => {
+export const requestPasswordReset = async (req, res) => {
   const { error, value } = requestResetSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
@@ -171,7 +171,7 @@ const requestPasswordReset = async (req, res) => {
   res.status(200).json({ message: 'If the email exists, a reset link has been sent' });
 };
 
-const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   const { error, value } = resetPasswordSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
@@ -195,7 +195,7 @@ const resetPassword = async (req, res) => {
   res.status(200).json({ message: 'Password reset successful. Please log in again.' });
 };
 
-const logout = async (req, res) => {
+export const logout = async (req, res) => {
   const { refreshToken } = req.body;
   if (!refreshToken) return res.status(400).json({ error: 'Missing refresh token' });
   try {
@@ -210,14 +210,4 @@ const logout = async (req, res) => {
   } catch {
     res.status(200).json({ message: 'Logged out' });
   }
-};
-
-module.exports = {
-  register,
-  login,
-  refresh,
-  verifyEmail,
-  requestPasswordReset,
-  resetPassword,
-  logout,
 };
