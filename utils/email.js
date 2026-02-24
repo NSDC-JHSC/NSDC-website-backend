@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
   // host: process.env.SMTP_HOST,
@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
   // secure: false,
 
   // for gmail
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -94,7 +94,6 @@ const verificationEmailTemplate = (verifyLink) => `
   </div>
 `;
 
-
 const resetEmailTemplate = (resetLink) => `
   <div style="font-family: Arial, Helvetica, sans-serif; background-color: #f5f6fa; padding: 20px;">
     <div style="max-width: 600px; margin: auto; background: #ffffff; border-radius: 8px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -166,5 +165,21 @@ const resetEmailTemplate = (resetLink) => `
   </div>
 `;
 
+//mail send for QR code for event
+const qrEmailTemplate = (eventTitle, qrToken) => `
+  <div style="font-family: Arial">
+    <h2>🎟 Event Entry QR Code</h2>
+    <p>You are successfully registered for <b>${eventTitle}</b>.</p>
+
+    <p>Show this QR code at the venue:</p>
+
+    <img 
+      src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrToken)}"
+      alt="Event QR Code"
+    />
+
+    <p><b>Important:</b> QR is valid only till event end time.</p>
+  </div>
+`;
 
 module.exports = { sendEmail, verificationEmailTemplate, resetEmailTemplate };
